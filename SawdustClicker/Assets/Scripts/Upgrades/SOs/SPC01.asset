@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d11546cdc3b36154fbe14b6bde1ca4af, type: 3}
   m_Name: SPC01
   m_EditorClassIdentifier: 
+  Name: Bronze Saw
+  Description: Increases your SPC
+  TimesPurchased: 1
   UpgradeAmmount: 1
   OriginalUpdgradeCost: 50
   CurrentUpgradeCost: 50
   CostIncreasePerPurchase: 0.08
-  UpgradeButtonText: 1 SPC
-  UpgradeButtonDescription: Increase your SPC by {0}

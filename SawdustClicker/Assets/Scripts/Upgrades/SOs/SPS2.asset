@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 760d241d8d6c55641a506ef861fb472c, type: 3}
   m_Name: SPS2
   m_EditorClassIdentifier: 
+  Name: Farm
+  Description: Grows coockie plants from coockie seeds.
+  TimesPurchased: 1
   UpgradeAmmount: 100
   OriginalUpdgradeCost: 10000
   CurrentUpgradeCost: 10000
   CostIncreasePerPurchase: 0.08
-  UpgradeButtonText: 100 SPS
-  UpgradeButtonDescription: Increase your SPS by {0}

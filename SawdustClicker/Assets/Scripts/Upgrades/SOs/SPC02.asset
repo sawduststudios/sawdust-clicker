@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d11546cdc3b36154fbe14b6bde1ca4af, type: 3}
   m_Name: SPC02
   m_EditorClassIdentifier: 
+  Name: Golden Saw
+  Description: Even more SPC!
+  TimesPurchased: 1
   UpgradeAmmount: 500
-  OriginalUpdgradeCost: 75000
-  CurrentUpgradeCost: 75000
+  OriginalUpdgradeCost: 100
+  CurrentUpgradeCost: 100
   CostIncreasePerPurchase: 0.08
-  UpgradeButtonText: 500 SPC
-  UpgradeButtonDescription: Increase your SPC by {0}

@@ -8,6 +8,6 @@ public class UpgradeButtonRefferences : MonoBehaviour
 {
     public Button UpgradeButton;
     public TextMeshProUGUI UpgradeButtonText;
+    public TextMeshProUGUI UpgradeNameText;
     public TextMeshProUGUI UpgradeDescriptionText;
-    public TextMeshProUGUI UpgradeCostText;
 }

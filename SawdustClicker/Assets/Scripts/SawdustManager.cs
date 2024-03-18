@@ -146,7 +146,10 @@ public class SawdustManager : MonoBehaviour
             upgrade.CurrentUpgradeCost *= (1 + upgrade.CostIncreasePerPurchase);
             upgrade.CurrentUpgradeCost = System.Math.Round(upgrade.CurrentUpgradeCost, 2);
 
-            buttonRefs.UpgradeCostText.text = "Cost: " + upgrade.CurrentUpgradeCost.ToString();
+            buttonRefs.UpgradeButtonText.text = upgrade.CurrentUpgradeCost.ToString();
+            
+            upgrade.TimesPurchased++;
+            buttonRefs.UpgradeNameText.text = upgrade.TimesPurchased.ToString() + " " + upgrade.Name;
         }
     }
 

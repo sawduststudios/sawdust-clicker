@@ -15,9 +15,10 @@ public class InitializeUpgrades : MonoBehaviour
 
             // set text
             UpgradeButtonRefferences buttonRef = upgradeUI.GetComponent<UpgradeButtonRefferences>();
-            buttonRef.UpgradeButtonText.text = upgrade.UpgradeButtonText;
-            buttonRef.UpgradeDescriptionText.SetText(upgrade.UpgradeButtonDescription, upgrade.UpgradeAmmount);
-            buttonRef.UpgradeCostText.text = "Cost: " + upgrade.CurrentUpgradeCost.ToString();
+            buttonRef.UpgradeNameText.text = upgrade.TimesPurchased.ToString() + " " + upgrade.Name;
+            buttonRef.UpgradeDescriptionText.text = upgrade.Description;
+
+            buttonRef.UpgradeButtonText.text = upgrade.CurrentUpgradeCost.ToString();
 
             // set OnClick
             buttonRef.UpgradeButton.onClick.AddListener(() => SawdustManager.Instance.OnUpgradeButtonClick(upgrade, buttonRef));

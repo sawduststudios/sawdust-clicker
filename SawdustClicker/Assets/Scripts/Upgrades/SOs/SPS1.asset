@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 760d241d8d6c55641a506ef861fb472c, type: 3}
   m_Name: SPS1
   m_EditorClassIdentifier: 
+  Name: Grandma
+  Description: A nice grandma to bake more coockies.
+  TimesPurchased: 1
   UpgradeAmmount: 10
   OriginalUpdgradeCost: 1000
   CurrentUpgradeCost: 1000
   CostIncreasePerPurchase: 0.08
-  UpgradeButtonText: 10 SPS
-  UpgradeButtonDescription: Increase your SPS by {0}
