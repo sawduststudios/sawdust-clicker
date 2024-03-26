@@ -5,6 +5,7 @@ using UnityEngine;
 
 using DG;
 using DG.Tweening;
+using Unity.VisualScripting;
 
 public class SawdustManager : MonoBehaviour
 {
@@ -19,18 +20,47 @@ public class SawdustManager : MonoBehaviour
     [SerializeField] private GameObject _backgroundObj;
 
     [Space]
-    public SawdustUpgrade[] Upgrades;
+    public BuildingUpgrade[] Buildings;
     [SerializeField] private GameObject _upgradeUIToSpawn;
     [SerializeField] private Transform _upgradeUIParent;
-    public GameObject SPSObjToSpawn;
 
+    [HideInInspector]
     public double CurrentSawdustCount { get; set; }
-    public double SPS { get; set; }
 
-    // upgrades
-    public double SawdustPerClickUpgrade { get; set; }
+    [HideInInspector]
+    public double PerSecMultiplier = 1;
+    [HideInInspector]
+    public double SawdustPerSec {
+        get 
+        {
+            double sps = 0;
+            foreach (var building in Buildings)
+            {
+                sps += building.TotalSPS;
+            }
+            return sps * PerSecMultiplier;
+        }
+    }
 
-    private InitializeUpgrades _initializeUpgrades;
+    [Header("Per Click")]
+    [HideInInspector]
+    [Tooltip("The base ammount of sawdust per click")]
+    public double PerClickBase = 1;
+    [HideInInspector]
+    [Tooltip("Multiplies per click")]
+    public double PerClickMultiplier = 1;
+    [HideInInspector]
+    [Tooltip("Add SawdustPerSec% to each click (before multiplier gets applied)")]
+    public double ClickPercentFromSPS { get; set; }
+    [HideInInspector]
+    public double PerClickAmmount {
+        get
+        {
+            return (PerClickBase + SawdustPerSec * ClickPercentFromSPS) * PerClickMultiplier;
+        }
+    }
+
+    private InitializeUI _initializeUI;
 
     private void Awake()
     {
@@ -48,10 +78,23 @@ public class SawdustManager : MonoBehaviour
         _upgradeCanvas.SetActive(false);
         MainCanvas.SetActive(true);
 
-        SawdustPerClickUpgrade = 1;
+        _initializeUI = GetComponent<InitializeUI>();
+        _initializeUI.InitBuildingsUI(Buildings, _upgradeUIToSpawn, _upgradeUIParent);
+    }
 
-        _initializeUpgrades = GetComponent<InitializeUpgrades>();
-        _initializeUpgrades.InitializeGivenUpgrades(Upgrades, _upgradeUIToSpawn, _upgradeUIParent);
+    private void Start()
+    {
+        StartCoroutine(AddSPSCoroutine());
+    }
+
+    IEnumerator AddSPSCoroutine(float updatesPerSec = 5)
+    {
+        while (true)
+        {
+            CurrentSawdustCount += SawdustPerSec / updatesPerSec;
+            UpdateUI();
+            yield return new WaitForSeconds(1f / updatesPerSec);
+        }
     }
 
     #region UI Updates
@@ -64,17 +107,19 @@ public class SawdustManager : MonoBehaviour
 
     private void UpdateSawdustCountUI()
     {
-        _sawdustCountText.text = CurrentSawdustCount.ToString() + " Sawdust";
+        _sawdustCountText.text = CurrentSawdustCount.ToString("F0") + " Sawdust";
     }
+
     private void UpdateSPSUI()
     {
-        _spsText.text = SPS.ToString() + " SPS";
+        _spsText.text = SawdustPerSec.ToString("F0") + " SawdustPerSec";
     }
+
 
     #endregion
 
     #region On Trunk Click
-    
+
     public void OnTrunkClicked()
     {
         IncreaseSawdust();
@@ -82,7 +127,7 @@ public class SawdustManager : MonoBehaviour
 
     private void IncreaseSawdust()
     {
-        CurrentSawdustCount += SawdustPerClickUpgrade;
+        CurrentSawdustCount += PerClickAmmount;
         UpdateUI();
 
         _sawdustTrunkObj.transform.DOBlendableScaleBy(new Vector3(0.05f, 0.05f, 0.05f), 0.05f).OnComplete(TrunkScaleBack);
@@ -100,7 +145,7 @@ public class SawdustManager : MonoBehaviour
 
     #endregion
 
-    #region Button Presses
+    #region Screen Switching
 
     public void OnUpgradeButtonPressed()
     {
@@ -124,32 +169,47 @@ public class SawdustManager : MonoBehaviour
         UpdateUI();
     }
 
-    public void SimpleSPSIncrease(double ammount) 
+    #endregion
+
+    #region Increase for duration
+
+    public void PerSecondIncreaseFor(double multiplier, float duration)
     {
-        CurrentSawdustCount += ammount;
+        StartCoroutine(IncreasePerSecFor(multiplier, duration));
+    }
+
+    IEnumerator IncreasePerSecFor(double multiplier, float duration)
+    {
+        Debug.Log("Increasing PerSec for " + duration + " seconds by x" + multiplier);
+        PerSecMultiplier *= multiplier;
         UpdateUI();
+        yield return new WaitForSeconds(duration);
+        PerSecMultiplier /= multiplier;
+        UpdateUI();
+        Debug.Log("PerSec multiplier x" + multiplier + " ran out!");
     }
 
     #endregion
 
     #region Events
 
-    public void OnUpgradeButtonClick(SawdustUpgrade upgrade, UpgradeButtonRefferences buttonRefs)
+    public void OnUpgradeButtonClick(UpgradeButtonRefferences buttonRefs)
     {
-        if (CurrentSawdustCount > upgrade.CurrentUpgradeCost) 
+        BuildingUpgrade building = buttonRefs.Building;
+        if (CurrentSawdustCount > building.CurrentUpgradeCost) 
         {
-            upgrade.ApplyUpgrade();
+            Debug.Log($"{building.Name} purchased!!");
+            building.BuildingPurchased(1);
 
-            CurrentSawdustCount -= upgrade.CurrentUpgradeCost;
+            // take away sawdust
+            CurrentSawdustCount -= building.CurrentUpgradeCost;
             UpdateUI();
 
-            upgrade.CurrentUpgradeCost *= (1 + upgrade.CostIncreasePerPurchase);
-            upgrade.CurrentUpgradeCost = System.Math.Round(upgrade.CurrentUpgradeCost, 2);
-
-            buttonRefs.UpgradeButtonText.text = upgrade.CurrentUpgradeCost.ToString();
-            
-            upgrade.TimesPurchased++;
-            buttonRefs.UpgradeNameText.text = upgrade.TimesPurchased.ToString() + " " + upgrade.Name;
+            buttonRefs.UpdateBuildingUI();
+        }
+        else
+        {
+            Debug.Log("Not enough sawdust!");
         }
     }
 

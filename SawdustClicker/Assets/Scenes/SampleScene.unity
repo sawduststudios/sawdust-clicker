@@ -1073,14 +1073,14 @@ MonoBehaviour:
   _sawdustTrunkObj: {fileID: 1602273369}
   SawdustTextPopUp: {fileID: 0}
   _backgroundObj: {fileID: 861133269}
-  Upgrades:
-  - {fileID: 11400000, guid: 0cecb0293bae136489e784f284c3477b, type: 2}
-  - {fileID: 11400000, guid: 0c141ec5074cbb7439f603b42bb0cda9, type: 2}
-  - {fileID: 11400000, guid: c7e00c498f2e33747a4db2555b30b056, type: 2}
-  - {fileID: 11400000, guid: 3e48e0d1ac72e004d9e1b61eada5574d, type: 2}
+  Buildings:
+  - {fileID: 0}
+  - {fileID: 0}
   _upgradeUIToSpawn: {fileID: 6343787930797289360, guid: 9bd2994bd731b2346b48f1faa92566c8, type: 3}
   _upgradeUIParent: {fileID: 626569311}
-  SPSObjToSpawn: {fileID: 9055537698475900171, guid: e8d3deaa39cd4da4f885627cb3c41f52, type: 3}
+  PerSecMultiplier: 1
+  PerClickBase: 1
+  PerClickMultiplier: 1
 --- !u!4 &766456278
 Transform:
   m_ObjectHideFlags: 0
