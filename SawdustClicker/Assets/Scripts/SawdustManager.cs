@@ -6,6 +6,7 @@ using UnityEngine;
 using DG;
 using DG.Tweening;
 using Unity.VisualScripting;
+using UnityEngine.EventSystems;
 
 public class SawdustManager : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class SawdustManager : MonoBehaviour
 
     public GameObject MainCanvas;
     [SerializeField] private GameObject _upgradeCanvas;
+    [SerializeField] private GameObject _upgradeScreenButton;
     [SerializeField] private TextMeshProUGUI _sawdustCountText;
     [SerializeField] private TextMeshProUGUI _spsText;
     [SerializeField] private GameObject _sawdustTrunkObj;
@@ -87,6 +89,14 @@ public class SawdustManager : MonoBehaviour
         StartCoroutine(AddSPSCoroutine());
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.P)) 
+        {
+            SimpleSawdustIncrease(10000);
+        }
+    }
+
     IEnumerator AddSPSCoroutine(float updatesPerSec = 5)
     {
         while (true)
@@ -107,12 +117,12 @@ public class SawdustManager : MonoBehaviour
 
     private void UpdateSawdustCountUI()
     {
-        _sawdustCountText.text = CurrentSawdustCount.ToString("F0") + " Sawdust";
+        _sawdustCountText.text = CurrentSawdustCount.ToFormattedStr() + " Sawdust";
     }
 
     private void UpdateSPSUI()
     {
-        _spsText.text = SawdustPerSec.ToString("F0") + " SawdustPerSec";
+        _spsText.text = SawdustPerSec.ToFormattedStr() + " SawdustPerSec";
     }
 
 
@@ -120,9 +130,11 @@ public class SawdustManager : MonoBehaviour
 
     #region On Trunk Click
 
-    public void OnTrunkClicked()
+    public void OnTrunkClicked(PointerEventData pointerEventData)
     {
         IncreaseSawdust();
+        
+        PopUpText.Create(PerClickAmmount, pointerEventData.position);
     }
 
     private void IncreaseSawdust()
@@ -150,13 +162,15 @@ public class SawdustManager : MonoBehaviour
     public void OnUpgradeButtonPressed()
     {
         _upgradeCanvas.SetActive(true);
-        MainCanvas.SetActive(false);
+        //MainCanvas.SetActive(false);
+        _upgradeScreenButton.SetActive(false);
     }
 
     public void OnMainButtonPressed()
     {
         _upgradeCanvas.SetActive(false);
         MainCanvas.SetActive(true);
+        _upgradeScreenButton.SetActive(true);
     }
 
     #endregion

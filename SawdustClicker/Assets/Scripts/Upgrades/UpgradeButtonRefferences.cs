@@ -24,6 +24,6 @@ public class UpgradeButtonRefferences : MonoBehaviour
         UpgradeNameText.text = _building.TimesPurchased.ToString() + " " + _building.Name;
         UpgradeDescriptionText.text = _building.Description;
 
-        UpgradeButtonText.text = _building.CurrentUpgradeCost.ToString();
+        UpgradeButtonText.text = _building.CurrentUpgradeCost.ToFormattedStr();
     }
 }
