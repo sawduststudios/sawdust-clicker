@@ -26,4 +26,23 @@ public class UpgradeButtonRefferences : MonoBehaviour
 
         UpgradeButtonText.text = _building.CurrentUpgradeCost.ToFormattedStr();
     }
+
+    public void ShowBuildingInfo()
+    {
+        SawdustManager.Instance.ShowInfoBox(ToNiceString());
+    }
+
+    public string ToNiceString()
+    {
+        string result = "";
+        result += _building.Name + "\n";
+        result += "One generates: " + _building.GainPerSecond.ToFormattedStr() + " per second\n";
+        result += "Times purchased: " + _building.TimesPurchased + "\n";
+        result += "Current multiplier: " + _building.GainMultiplier + "\n";
+        result += "\n";
+        result += "Total SPS: " + _building.TotalSPS.ToFormattedStr() + "\n";
+        result += "Making " + (100 * _building.TotalSPS/SawdustManager.Instance.SawdustPerSec).ToString("F2") + "% of your SPS";
+
+        return result;
+    }
 }

@@ -7,11 +7,14 @@ using DG;
 using DG.Tweening;
 using Unity.VisualScripting;
 using UnityEngine.EventSystems;
+using System.IO;
+using UnityEngine.SceneManagement;
 
 public class SawdustManager : MonoBehaviour
 {
     public static SawdustManager Instance;
 
+    // GO Refferences
     public GameObject MainCanvas;
     [SerializeField] private GameObject _upgradeCanvas;
     [SerializeField] private GameObject _upgradeScreenButton;
@@ -21,8 +24,14 @@ public class SawdustManager : MonoBehaviour
     public GameObject SawdustTextPopUp;
     [SerializeField] private GameObject _backgroundObj;
 
+    // Info Box
+    [SerializeField] private GameObject _infoBox;
+    [SerializeField] private TextMeshProUGUI _infoBoxText;
+
+
     [Space]
-    public BuildingUpgrade[] Buildings;
+    public BuildingUpgrade[] Buildings; // All buildings in the game
+    // GO Refferences
     [SerializeField] private GameObject _upgradeUIToSpawn;
     [SerializeField] private Transform _upgradeUIParent;
 
@@ -81,12 +90,21 @@ public class SawdustManager : MonoBehaviour
         MainCanvas.SetActive(true);
 
         _initializeUI = GetComponent<InitializeUI>();
-        _initializeUI.InitBuildingsUI(Buildings, _upgradeUIToSpawn, _upgradeUIParent);
     }
 
     private void Start()
     {
+        LoadGame();
+
+        UpdateUI();
+        _initializeUI.InitBuildingsUI(Buildings, _upgradeUIToSpawn, _upgradeUIParent);
+
         StartCoroutine(AddSPSCoroutine());
+    }
+
+    private void OnDestroy()
+    {
+        SaveGame();
     }
 
     private void Update()
@@ -94,6 +112,11 @@ public class SawdustManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P)) 
         {
             SimpleSawdustIncrease(10000);
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ResetGame();
         }
     }
 
@@ -106,6 +129,133 @@ public class SawdustManager : MonoBehaviour
             yield return new WaitForSeconds(1f / updatesPerSec);
         }
     }
+
+    #region Save/Load
+
+    private bool _shouldSave = true;
+
+    #region Saving Keys
+    private const string saveKey_CurrentSawdustCount = "CurrentSawdustCount";
+    private const string saveKey_PerSecMultiplier = "PerSecMultiplier";
+    private const string saveKey_PerClickBase = "PerClickBase";
+    private const string saveKey_PerClickMultiplier = "PerClickMultiplier";
+    private const string saveKey_ClickPercentFromSPS = "ClickPercentFromSPS";
+    private const string saveKey_Buildings = "Buildings";
+    private const string saveFileName_Buildings = "buildings.json";
+    #endregion
+    public void SaveGame()
+    {
+        if (!_shouldSave)
+        {
+            Debug.LogWarning("Saving disabled...");
+            return;
+        }
+        Debug.Log("SAVING GAME");
+
+        PlayerPrefs.SetString(saveKey_CurrentSawdustCount, CurrentSawdustCount.ToString());
+        PlayerPrefs.SetString(saveKey_PerSecMultiplier, PerSecMultiplier.ToString());
+        PlayerPrefs.SetString(saveKey_PerClickBase, PerClickBase.ToString());
+        PlayerPrefs.SetString(saveKey_PerClickMultiplier, PerClickMultiplier.ToString());
+        PlayerPrefs.SetString(saveKey_ClickPercentFromSPS, ClickPercentFromSPS.ToString());
+
+        // Serialize Buildings array into JSON and save it as a string
+        string buildingsJson = Buildings.Serialize();
+        Debug.Log(buildingsJson);
+        //PlayerPrefs.SetString(saveKey_Buildings, buildingsJson);
+        SaveToFile(saveFileName_Buildings, buildingsJson);
+
+        PlayerPrefs.Save();
+    }
+
+    public void LoadGame()
+    {
+        Debug.Log("LOADING GAME");
+
+        if (PlayerPrefs.HasKey(saveKey_CurrentSawdustCount))
+            CurrentSawdustCount = double.Parse(PlayerPrefs.GetString(saveKey_CurrentSawdustCount));
+        if (PlayerPrefs.HasKey(saveKey_PerSecMultiplier))
+            PerSecMultiplier = double.Parse(PlayerPrefs.GetString(saveKey_PerSecMultiplier));
+        if (PlayerPrefs.HasKey(saveKey_PerClickBase))
+            PerClickBase = double.Parse(PlayerPrefs.GetString(saveKey_PerClickBase));
+        if (PlayerPrefs.HasKey(saveKey_PerClickMultiplier))
+            PerClickMultiplier = double.Parse(PlayerPrefs.GetString(saveKey_PerClickMultiplier));
+        if (PlayerPrefs.HasKey(saveKey_ClickPercentFromSPS))
+            ClickPercentFromSPS = double.Parse(PlayerPrefs.GetString(saveKey_ClickPercentFromSPS));
+
+        // Deserialize Buildings array from JSON
+        //if (PlayerPrefs.HasKey(saveKey_Buildings))
+        
+        // if buildings file exists, load it
+        if (File.Exists(Path.Combine(Application.persistentDataPath, saveFileName_Buildings)))
+        {
+            //string buildingsJson = PlayerPrefs.GetString(saveKey_Buildings);
+            //Buildings = buildingsJson.DeserializeToBuildingUpgradeArr();
+
+            string buildingsJson = LoadFromFile(saveFileName_Buildings);
+            ExtensionMethods.LoadBuildings(buildingsJson);
+
+            Debug.Log("Loaded buildings len" + Buildings.Length);
+            Debug.Log("Loaded buildings, computing SPS");
+
+            double sps = 0;
+            foreach (var building in Buildings)
+            {
+                sps += building.TotalSPS;
+            }
+            sps = sps * PerSecMultiplier;
+            Debug.Log("Sps computed as " + sps);
+        }
+    }
+
+    private void SaveToFile(string fileName, string data)
+    {
+        string filePath = Path.Combine(Application.persistentDataPath, fileName);
+        File.WriteAllText(filePath, data);
+    }
+
+    private string LoadFromFile(string fileName)
+    {
+        string filePath = Path.Combine(Application.persistentDataPath, fileName);
+        if (File.Exists(filePath))
+        {
+            return File.ReadAllText(filePath);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public void ResetGame()
+    {
+        Debug.LogWarning("RESETTING THE WHOLE GAME");
+        _shouldSave = false;
+        PlayerPrefs.DeleteAll();
+        File.Delete(Path.Combine(Application.persistentDataPath, saveFileName_Buildings));
+        foreach (var building in Buildings)
+        {
+            building.ResetBuilding();
+        }
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+        //StartCoroutine(ResetGameCoroutine());
+    }
+
+    IEnumerator ResetGameCoroutine()
+    {
+        _shouldSave = false;
+        PlayerPrefs.DeleteAll();
+        File.Delete(Path.Combine(Application.persistentDataPath, saveFileName_Buildings));
+        foreach (var building in Buildings)
+        {
+            building.ResetBuilding();
+        }
+        yield return new WaitForSeconds(2f);
+        Debug.LogWarning("RESETTING THE WHOLE GAME");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    #endregion
 
     #region UI Updates
 
@@ -125,6 +275,11 @@ public class SawdustManager : MonoBehaviour
         _spsText.text = SawdustPerSec.ToFormattedStr() + " SawdustPerSec";
     }
 
+    public void ShowInfoBox(string msg)
+    {
+        _infoBoxText.text = msg;
+        _infoBox.SetActive(true);
+    }
 
     #endregion
 

@@ -13,12 +13,12 @@ public class BuildingUpgrade : ScriptableObject
     [TextArea(3, 10)]
     public string Description;
 
-    [HideInInspector]
+    //[HideInInspector]
     public int TimesPurchased = 0;
 
     [Tooltip("The ammount of sawdust per second one building generates (without multipliers)")]
     public float GainPerSecond;
-    [HideInInspector]
+    //[HideInInspector]
     public float GainMultiplier = 1;
 
     [Tooltip("The original cost of the building")]
@@ -26,7 +26,7 @@ public class BuildingUpgrade : ScriptableObject
     [Tooltip("The ammount the cost increases per purchase in percent")]
     public double CostIncreasePerPurchase = 0.15f;
 
-    [HideInInspector]
+    //[HideInInspector]
     public double CurrentUpgradeCost = 100;
 
     public double TotalSPS
@@ -45,5 +45,12 @@ public class BuildingUpgrade : ScriptableObject
             CurrentUpgradeCost *= 1 + CostIncreasePerPurchase;
             CurrentUpgradeCost = System.Math.Round(CurrentUpgradeCost, 2);
         }
+    }
+
+    public void ResetBuilding()
+    {
+        TimesPurchased = 0;
+        CurrentUpgradeCost = OriginalUpdgradeCost;
+        GainMultiplier = 1;
     }
 }
