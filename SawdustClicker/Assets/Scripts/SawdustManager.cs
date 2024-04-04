@@ -9,15 +9,25 @@ using Unity.VisualScripting;
 using UnityEngine.EventSystems;
 using System.IO;
 using UnityEngine.SceneManagement;
+using System;
+
+using System.Linq;
 
 public class SawdustManager : MonoBehaviour
 {
     public static SawdustManager Instance;
 
+    [SerializeField] private float _totalTime = 900;
+    private bool _shouldReset = false;
+    private bool _didTimeRunOut = false;
+
     // GO Refferences
     public GameObject MainCanvas;
-    [SerializeField] private GameObject _upgradeCanvas;
-    [SerializeField] private GameObject _upgradeScreenButton;
+    [SerializeField] private GameObject _buildingsCanvas;
+    [SerializeField] private GameObject _buildingsScreenButton;
+    [SerializeField] private GameObject _upgradesCanvas;
+    [SerializeField] private GameObject _upgradesScreenButton;
+
     [SerializeField] private TextMeshProUGUI _sawdustCountText;
     [SerializeField] private TextMeshProUGUI _spsText;
     [SerializeField] private GameObject _sawdustTrunkObj;
@@ -28,10 +38,17 @@ public class SawdustManager : MonoBehaviour
     [SerializeField] private GameObject _infoBox;
     [SerializeField] private TextMeshProUGUI _infoBoxText;
 
+    [SerializeField] private GameObject _restartBox;
+    [SerializeField] private TextMeshProUGUI _restartBoxText;
+
 
     [Space]
     public BuildingUpgrade[] Buildings; // All buildings in the game
+    public ClickUpgrade[] ClickUpgrades; // All click upgrades in the game
     // GO Refferences
+    [SerializeField] private GameObject _buildingUIToSpawn;
+    [SerializeField] private Transform _buildingUIParent;
+
     [SerializeField] private GameObject _upgradeUIToSpawn;
     [SerializeField] private Transform _upgradeUIParent;
 
@@ -86,7 +103,9 @@ public class SawdustManager : MonoBehaviour
 
         UpdateUI();
 
-        _upgradeCanvas.SetActive(false);
+        _buildingsCanvas.SetActive(false);
+        _upgradesCanvas.SetActive(false);
+        _restartBox.SetActive(false);
         MainCanvas.SetActive(true);
 
         _initializeUI = GetComponent<InitializeUI>();
@@ -97,7 +116,7 @@ public class SawdustManager : MonoBehaviour
         LoadGame();
 
         UpdateUI();
-        _initializeUI.InitBuildingsUI(Buildings, _upgradeUIToSpawn, _upgradeUIParent);
+        //_initializeUI.InitBuildingsUI(Buildings, _buildingUIToSpawn, _buildingUIParent);
 
         StartCoroutine(AddSPSCoroutine());
     }
@@ -140,6 +159,27 @@ public class SawdustManager : MonoBehaviour
                 Application.Quit();
             }
         }
+
+        _totalTime -= Time.deltaTime;
+        if (_totalTime <= 0)
+        {
+            TimeRanOut();
+        }
+    }
+
+    private void TimeRanOut()
+    {
+        if (_didTimeRunOut) return;
+        Debug.Log("TimeRanOut");
+        Time.timeScale = 0;
+        _shouldReset = true;
+
+        _restartBox.SetActive(true);
+        string text = "";
+        text += "The time ran out!\n\n";
+        text += "Final SPS: " + SawdustPerSec.ToFormattedStr() + "\n\n";
+        text += "Write your result onto the leaderboard!";
+        _restartBoxText.text = text;
     }
 
     IEnumerator AddSPSCoroutine(float updatesPerSec = 5)
@@ -157,16 +197,21 @@ public class SawdustManager : MonoBehaviour
     private bool _shouldSave = true;
 
     #region Saving Keys
+    private const string saveKey_TotalTime = "TotalTime";
     private const string saveKey_CurrentSawdustCount = "CurrentSawdustCount";
     private const string saveKey_PerSecMultiplier = "PerSecMultiplier";
     private const string saveKey_PerClickBase = "PerClickBase";
     private const string saveKey_PerClickMultiplier = "PerClickMultiplier";
     private const string saveKey_ClickPercentFromSPS = "ClickPercentFromSPS";
-    private const string saveKey_Buildings = "Buildings";
     private const string saveFileName_Buildings = "buildings.json";
+    private const string saveFileName_ClickUpgrades = "click_upgrades.json";
     #endregion
     public void SaveGame()
     {
+        if (_shouldReset) 
+        {
+            ResetGame();
+        }
         if (!_shouldSave)
         {
             Debug.LogWarning("Saving disabled...");
@@ -174,6 +219,8 @@ public class SawdustManager : MonoBehaviour
         }
         Debug.Log("SAVING GAME");
 
+        // Saving Manager state
+        PlayerPrefs.SetFloat(saveKey_TotalTime, _totalTime);
         PlayerPrefs.SetString(saveKey_CurrentSawdustCount, CurrentSawdustCount.ToString());
         PlayerPrefs.SetString(saveKey_PerSecMultiplier, PerSecMultiplier.ToString());
         PlayerPrefs.SetString(saveKey_PerClickBase, PerClickBase.ToString());
@@ -183,17 +230,24 @@ public class SawdustManager : MonoBehaviour
         PlayerPrefs.Save();
         Debug.Log("PlayerPrefs saved");
 
-        // Serialize Buildings array into JSON and save it as a string
+
+        // Saving Buildings
         string buildingsJson = Buildings.Serialize();
         Debug.Log("Saving buildings:" + buildingsJson);
-        //PlayerPrefs.SetString(saveKey_Buildings, buildingsJson);
         SaveToFile(saveFileName_Buildings, buildingsJson);
+
+        // Saving ClickUpgrades
+        string clickUpgradesJson = ClickUpgrades.Serialize();
+        Debug.Log("Saving click upgrades:" + clickUpgradesJson);
+        SaveToFile(saveFileName_ClickUpgrades, clickUpgradesJson);
     }
 
     public void LoadGame()
     {
         Debug.Log("LOADING GAME");
 
+        if (PlayerPrefs.HasKey(saveKey_TotalTime))
+            _totalTime = PlayerPrefs.GetFloat(saveKey_TotalTime);
         if (PlayerPrefs.HasKey(saveKey_CurrentSawdustCount))
             CurrentSawdustCount = double.Parse(PlayerPrefs.GetString(saveKey_CurrentSawdustCount));
         if (PlayerPrefs.HasKey(saveKey_PerSecMultiplier))
@@ -204,10 +258,9 @@ public class SawdustManager : MonoBehaviour
             PerClickMultiplier = double.Parse(PlayerPrefs.GetString(saveKey_PerClickMultiplier));
         if (PlayerPrefs.HasKey(saveKey_ClickPercentFromSPS))
             ClickPercentFromSPS = double.Parse(PlayerPrefs.GetString(saveKey_ClickPercentFromSPS));
-
-        // Deserialize Buildings array from JSON
-        //if (PlayerPrefs.HasKey(saveKey_Buildings))
         
+        // LOAD BUILDINGS
+
         // if buildings file exists, load it
         if (File.Exists(Path.Combine(Application.persistentDataPath, saveFileName_Buildings)))
         {
@@ -218,9 +271,6 @@ public class SawdustManager : MonoBehaviour
             Debug.Log("Loaded buildings: " + buildingsJson);
             ExtensionMethods.LoadBuildings(buildingsJson);
 
-            Debug.Log("Loaded from file buildings of len" + Buildings.Length);
-            Debug.Log("Loaded buildings, computing SPS");
-
             double sps = 0;
             foreach (var building in Buildings)
             {
@@ -230,8 +280,20 @@ public class SawdustManager : MonoBehaviour
             Debug.Log("Sps computed as " + sps);
         }
 
+
+        // LOAD CLICK UPGRADES
+
+        // if click upgrades file exists, load it
+        if (File.Exists(Path.Combine(Application.persistentDataPath, saveFileName_ClickUpgrades)))
+        {
+            string clickUpgradesJson = LoadFromFile(saveFileName_ClickUpgrades);
+            Debug.Log("Loaded click upgrades: " + clickUpgradesJson);
+            ExtensionMethods.LoadClickUpgrades(clickUpgradesJson);
+        }
+
         UpdateUI();
-        _initializeUI.InitBuildingsUI(Buildings, _upgradeUIToSpawn, _upgradeUIParent);
+        _initializeUI.InitBuildingsUI(Buildings, _buildingUIToSpawn, _buildingUIParent);
+        _initializeUI.InitUpgradesUI(ClickUpgrades, _upgradeUIToSpawn, _upgradeUIParent);
     }
 
     private void SaveToFile(string fileName, string data)
@@ -256,6 +318,10 @@ public class SawdustManager : MonoBehaviour
 
     public void ResetGame()
     {
+        _shouldReset = false;
+        Time.timeScale = 1;
+        _didTimeRunOut = false;
+
         Debug.LogWarning("RESETTING THE WHOLE GAME");
         _shouldSave = false;
         PlayerPrefs.DeleteAll();
@@ -264,22 +330,11 @@ public class SawdustManager : MonoBehaviour
         {
             building.ResetBuilding();
         }
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-
-        //StartCoroutine(ResetGameCoroutine());
-    }
-
-    IEnumerator ResetGameCoroutine()
-    {
-        _shouldSave = false;
-        PlayerPrefs.DeleteAll();
-        File.Delete(Path.Combine(Application.persistentDataPath, saveFileName_Buildings));
-        foreach (var building in Buildings)
+        File.Delete(Path.Combine(Application.persistentDataPath, saveFileName_ClickUpgrades));
+        foreach (var clickUpgrade in ClickUpgrades)
         {
-            building.ResetBuilding();
+            clickUpgrade.ResetUpgrade();
         }
-        yield return new WaitForSeconds(2f);
-        Debug.LogWarning("RESETTING THE WHOLE GAME");
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
@@ -342,27 +397,54 @@ public class SawdustManager : MonoBehaviour
 
     #region Screen Switching
 
-    public void OnUpgradeButtonPressed()
+    public void OnBuildingsButtonPress()
     {
-        _upgradeCanvas.SetActive(true);
-        //MainCanvas.SetActive(false);
-        _upgradeScreenButton.SetActive(false);
+        // activate buildings canvas
+        _buildingsCanvas.SetActive(true);
+        _upgradesCanvas.SetActive(false);
+
+        // deactivate main screen buttons
+        _buildingsScreenButton.SetActive(false);
+        _upgradesScreenButton.SetActive(false);
+    }
+
+    public void OnUpgradesButtonPress()
+    {
+        // activate upgrades canvas
+        _buildingsCanvas.SetActive(false);
+        _upgradesCanvas.SetActive(true);
+
+        // deactivate main screen buttons
+        _buildingsScreenButton.SetActive(false);
+        _upgradesScreenButton.SetActive(false);
     }
 
     public void OnMainButtonPressed()
     {
-        _upgradeCanvas.SetActive(false);
+        // deactivate canvases
+        _buildingsCanvas.SetActive(false);
+        _upgradesCanvas.SetActive(false);
         MainCanvas.SetActive(true);
-        _upgradeScreenButton.SetActive(true);
+
+        // activate main screen buttons
+        _buildingsScreenButton.SetActive(true);
+        _upgradesScreenButton.SetActive(true);
     }
 
     #endregion
 
-    #region Direct Increases
+    #region Increases
 
     public void SimpleSawdustIncrease(double ammount)
     {
         CurrentSawdustCount += ammount;
+        UpdateUI();
+    }
+
+    public void AddBuildingMultiplier(string buildingName, float multiplier)
+    {
+        BuildingUpgrade building = Buildings.First(x => x.Name == buildingName);
+        building.GainMultiplier *= multiplier;
         UpdateUI();
     }
 
@@ -383,17 +465,33 @@ public class SawdustManager : MonoBehaviour
         yield return new WaitForSeconds(duration);
         PerSecMultiplier /= multiplier;
         UpdateUI();
-        Debug.Log("PerSec multiplier x" + multiplier + " ran out!");
+        Debug.Log("PerSec multiplier x" + multiplier + " ran out! Now at " + PerSecMultiplier);
+    }
+
+    public void ClickIncreaseFor(double multiplier, float duration)
+    {
+        StartCoroutine(IncreaseClickFor(multiplier, duration));
+    }
+
+    IEnumerator IncreaseClickFor(double multiplier, float duration)
+    {
+        Debug.Log("Increasing Click for " + duration + " seconds by x" + multiplier);
+        PerClickMultiplier *= multiplier;
+        UpdateUI();
+        yield return new WaitForSeconds(duration);
+        PerClickMultiplier /= multiplier;
+        UpdateUI();
+        Debug.Log("Click multiplier x" + multiplier + " ran out! Now at " + PerClickMultiplier);
     }
 
     #endregion
 
     #region Events
 
-    public void OnUpgradeButtonClick(UpgradeButtonRefferences buttonRefs)
+    public void OnBuildingPurchaseClick(BuildingUIRefferences buttonRefs)
     {
         BuildingUpgrade building = buttonRefs.Building;
-        if (CurrentSawdustCount > building.CurrentUpgradeCost) 
+        if (CurrentSawdustCount >= building.CurrentUpgradeCost) 
         {
             CurrentSawdustCount -= building.CurrentUpgradeCost;
 
@@ -404,6 +502,26 @@ public class SawdustManager : MonoBehaviour
             UpdateUI();
 
             buttonRefs.UpdateBuildingUI();
+        }
+        else
+        {
+            Debug.Log("Not enough sawdust!");
+        }
+    }
+
+    public void OnUpgradePurchaseClick(UpgradeUIRefferences buttonRefs)
+    {
+        ClickUpgrade upgrade = buttonRefs.Upgrade;
+
+        if (CurrentSawdustCount >= upgrade.PurchaseCost)
+        {
+            CurrentSawdustCount -= upgrade.PurchaseCost;
+            upgrade.PurchaseUpgrade();
+            Debug.Log($"{upgrade.Name} purchased!!");
+
+            UpdateUI();
+            _initializeUI.InitUpgradesUI(ClickUpgrades, _upgradeUIToSpawn, _upgradeUIParent);
+            buttonRefs.UpdateUpgradeUI();
         }
         else
         {

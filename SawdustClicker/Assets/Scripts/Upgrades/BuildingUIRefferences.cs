@@ -4,12 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class UpgradeButtonRefferences : MonoBehaviour
+public class BuildingUIRefferences : MonoBehaviour
 {
-    public Button UpgradeButton;
-    public TextMeshProUGUI UpgradeButtonText;
-    public TextMeshProUGUI UpgradeNameText;
-    public TextMeshProUGUI UpgradeDescriptionText;
+    public Button BuyButton;
+    public TextMeshProUGUI BuyButtonText;
+    public TextMeshProUGUI NameText;
+    public TextMeshProUGUI DescriptionText;
+    public Image IconImage;
 
     private BuildingUpgrade _building;
     public BuildingUpgrade Building { get => _building; }
@@ -21,10 +22,10 @@ public class UpgradeButtonRefferences : MonoBehaviour
 
     public void UpdateBuildingUI()
     {
-        UpgradeNameText.text = _building.TimesPurchased.ToString() + " " + _building.Name;
-        UpgradeDescriptionText.text = _building.Description;
+        NameText.text = _building.TimesPurchased.ToString() + " " + _building.Name;
+        DescriptionText.text = _building.Description;
 
-        UpgradeButtonText.text = _building.CurrentUpgradeCost.ToFormattedStr();
+        BuyButtonText.text = _building.CurrentUpgradeCost.ToFormattedStr();
     }
 
     public void ShowBuildingInfo()

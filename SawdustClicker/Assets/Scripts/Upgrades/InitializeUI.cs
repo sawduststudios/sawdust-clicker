@@ -21,14 +21,39 @@ public class InitializeUI : MonoBehaviour
             //building.CurrentUpgradeCost = building.CurrentUpgradeCost;
 
             // Asiign building to button
-            UpgradeButtonRefferences buttonRef = upgradeUI.GetComponent<UpgradeButtonRefferences>();
+            BuildingUIRefferences buttonRef = upgradeUI.GetComponent<BuildingUIRefferences>();
             buttonRef.AssignBuilding(building);
+            buttonRef.IconImage.sprite = SpriteProvider.Instance.GetSprite(building.Name);
 
             // update UI
             buttonRef.UpdateBuildingUI();
 
             // set OnClick
-            buttonRef.UpgradeButton.onClick.AddListener(() => SawdustManager.Instance.OnUpgradeButtonClick(buttonRef));
+            buttonRef.BuyButton.onClick.AddListener(() => SawdustManager.Instance.OnBuildingPurchaseClick(buttonRef));
+        }
+    }
+
+    public void InitUpgradesUI(ClickUpgrade[] upgrades, GameObject upgradeUIPrefab, Transform UIParent)
+    {
+        // Remove all children of UIParent
+        foreach (Transform child in UIParent)
+        {
+            Destroy(child.gameObject);
+        }
+        foreach (ClickUpgrade upgrade in upgrades)
+        {
+            if (upgrade.Purchased)
+                continue;
+
+            GameObject upgradeUI = Instantiate(upgradeUIPrefab, UIParent);
+            // Asiign building to button
+            UpgradeUIRefferences buttonRef = upgradeUI.GetComponent<UpgradeUIRefferences>();
+            buttonRef.AssignUpgrade(upgrade);
+            // update UI
+            buttonRef.UpdateUpgradeUI();
+            buttonRef.IconImage.sprite = SpriteProvider.Instance.GetSprite(upgrade.Name);
+            // set OnClick
+            buttonRef.BuyButton.onClick.AddListener(() => SawdustManager.Instance.OnUpgradePurchaseClick(buttonRef));
         }
     }
 }

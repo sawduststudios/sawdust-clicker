@@ -115,6 +115,46 @@ public static class ExtensionMethods
             building.CurrentUpgradeCost = buildingsData[i].CurrentUpgradeCost;
         }
     }
+
+
+
+    public static string Serialize(this ClickUpgrade[] clickUpgrades)
+    {
+        List<ClickUpgradeData> list = new List<ClickUpgradeData>();
+        foreach (ClickUpgrade upgrade in clickUpgrades)
+        {
+            ClickUpgradeData upgradeData = new ClickUpgradeData();
+
+            upgradeData.Name = upgrade.Name;
+            upgradeData.Description = upgrade.Description;
+            upgradeData.Purchased = upgrade.Purchased;
+            upgradeData.PurchaseCost = upgrade.PurchaseCost;
+            upgradeData.ClickSPSPercentage = upgrade.ClickSPSPercentage;
+
+            list.Add(upgradeData);            
+        }
+        return JsonUtility.ToJson(new ClickUpgradeDataArray() { ClickUpgrades = list.ToArray() }, prettyPrint: true);
+    }
+
+    public static void LoadClickUpgrades(string clickUpgradesStr)
+    {
+        ClickUpgradeData[] clickUpgradesData = JsonUtility.FromJson<ClickUpgradeDataArray>(clickUpgradesStr).ClickUpgrades;
+        if (clickUpgradesData.Length != SawdustManager.Instance.ClickUpgrades.Length)
+        {
+            Debug.LogError("Click upgrade data length does not match GameManager.ClickUpgrades length");
+            return;
+        }
+        for (int i = 0; i < clickUpgradesData.Length; i++)
+        {
+            ClickUpgrade upgrade = SawdustManager.Instance.ClickUpgrades[i];
+            upgrade.Name = clickUpgradesData[i].Name;
+            upgrade.Description = clickUpgradesData[i].Description;
+            upgrade.Purchased = clickUpgradesData[i].Purchased;
+            upgrade.PurchaseCost = clickUpgradesData[i].PurchaseCost;
+            upgrade.ClickSPSPercentage = clickUpgradesData[i].ClickSPSPercentage;
+        }
+    }
+
 }
 
 // Data classes for serialization
@@ -136,4 +176,21 @@ public class BuildingData
 public class BuildingDataArray
 {
     public BuildingData[] Buildings;
+}
+
+
+[System.Serializable]
+public class ClickUpgradeData
+{
+    public string Name;
+    public string Description;
+    public bool Purchased;
+    public double PurchaseCost;
+    public double ClickSPSPercentage = 0.069;
+}
+
+[System.Serializable]
+public class ClickUpgradeDataArray
+{
+    public ClickUpgradeData[] ClickUpgrades;
 }

@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf5081e94737bdf479b391be94a093da, type: 3}
-  m_Name: Grandmas
+  m_Name: BandMembers
   m_EditorClassIdentifier: 
-  Name: Grandmas
-  InternalName: grandma
-  Description: They have been using saws long before you were born...
+  Name: Band Members
+  InternalName: Band Members
+  Description: Gonna burn, there be no release!
   TimesPurchased: 0
-  GainPerSecond: 1
+  GainPerSecond: 954321
   GainMultiplier: 1
-  OriginalUpdgradeCost: 10
+  OriginalUpdgradeCost: 1
   CostIncreasePerPurchase: 0.15
-  CurrentUpgradeCost: 10
+  CurrentUpgradeCost: 1

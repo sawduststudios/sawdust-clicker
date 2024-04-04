@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Priests
   m_EditorClassIdentifier: 
   Name: Holy Priests
-  InternalName: priest
+  InternalName: Holy Priests
   Description: They pray to make sawdust. You better pray too!
-  TimesPurchased: 0
+  TimesPurchased: 14
   GainPerSecond: 8
   GainMultiplier: 1
   OriginalUpdgradeCost: 1100
   CostIncreasePerPurchase: 0.15
-  CurrentUpgradeCost: 1100
+  CurrentUpgradeCost: 7783.276340937875
