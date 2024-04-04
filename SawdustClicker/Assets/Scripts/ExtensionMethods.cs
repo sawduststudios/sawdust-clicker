@@ -127,9 +127,9 @@ public class BuildingData
     public int TimesPurchased = 0;
     public float GainPerSecond;
     public float GainMultiplier = 1;
-    public double OriginalUpdgradeCost = 100;
+    public double OriginalUpdgradeCost = 7;
     public double CostIncreasePerPurchase = 0.15f;
-    public double CurrentUpgradeCost = 100;
+    public double CurrentUpgradeCost = 7;
 }
 
 [System.Serializable]

@@ -43,7 +43,7 @@ public class BuildingUpgrade : ScriptableObject
         {
             TimesPurchased++;
             CurrentUpgradeCost *= 1 + CostIncreasePerPurchase;
-            CurrentUpgradeCost = System.Math.Round(CurrentUpgradeCost, 2);
+            //CurrentUpgradeCost = System.Math.Round(CurrentUpgradeCost, 2);
         }
     }
 

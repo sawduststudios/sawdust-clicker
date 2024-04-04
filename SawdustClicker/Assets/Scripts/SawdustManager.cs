@@ -107,9 +107,22 @@ public class SawdustManager : MonoBehaviour
         SaveGame();
     }
 
+    private void OnApplicationPause(bool pause)
+    {
+        if (pause)
+        {
+            SaveGame();
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveGame();
+    }
+
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P)) 
+        if (Input.GetKeyDown(KeyCode.P))
         {
             SimpleSawdustIncrease(10000);
         }
@@ -117,6 +130,15 @@ public class SawdustManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             ResetGame();
+        }
+
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            if (Input.GetKey(KeyCode.Escape))
+            {
+                SaveGame();
+                Application.Quit();
+            }
         }
     }
 
@@ -158,13 +180,14 @@ public class SawdustManager : MonoBehaviour
         PlayerPrefs.SetString(saveKey_PerClickMultiplier, PerClickMultiplier.ToString());
         PlayerPrefs.SetString(saveKey_ClickPercentFromSPS, ClickPercentFromSPS.ToString());
 
+        PlayerPrefs.Save();
+        Debug.Log("PlayerPrefs saved");
+
         // Serialize Buildings array into JSON and save it as a string
         string buildingsJson = Buildings.Serialize();
-        Debug.Log(buildingsJson);
+        Debug.Log("Saving buildings:" + buildingsJson);
         //PlayerPrefs.SetString(saveKey_Buildings, buildingsJson);
         SaveToFile(saveFileName_Buildings, buildingsJson);
-
-        PlayerPrefs.Save();
     }
 
     public void LoadGame()
@@ -192,9 +215,10 @@ public class SawdustManager : MonoBehaviour
             //Buildings = buildingsJson.DeserializeToBuildingUpgradeArr();
 
             string buildingsJson = LoadFromFile(saveFileName_Buildings);
+            Debug.Log("Loaded buildings: " + buildingsJson);
             ExtensionMethods.LoadBuildings(buildingsJson);
 
-            Debug.Log("Loaded buildings len" + Buildings.Length);
+            Debug.Log("Loaded from file buildings of len" + Buildings.Length);
             Debug.Log("Loaded buildings, computing SPS");
 
             double sps = 0;
@@ -205,12 +229,16 @@ public class SawdustManager : MonoBehaviour
             sps = sps * PerSecMultiplier;
             Debug.Log("Sps computed as " + sps);
         }
+
+        UpdateUI();
+        _initializeUI.InitBuildingsUI(Buildings, _upgradeUIToSpawn, _upgradeUIParent);
     }
 
     private void SaveToFile(string fileName, string data)
     {
         string filePath = Path.Combine(Application.persistentDataPath, fileName);
         File.WriteAllText(filePath, data);
+        Debug.Log("File saved to " + filePath);
     }
 
     private string LoadFromFile(string fileName)
@@ -367,11 +395,12 @@ public class SawdustManager : MonoBehaviour
         BuildingUpgrade building = buttonRefs.Building;
         if (CurrentSawdustCount > building.CurrentUpgradeCost) 
         {
+            CurrentSawdustCount -= building.CurrentUpgradeCost;
+
             Debug.Log($"{building.Name} purchased!!");
             building.BuildingPurchased(1);
 
             // take away sawdust
-            CurrentSawdustCount -= building.CurrentUpgradeCost;
             UpdateUI();
 
             buttonRefs.UpdateBuildingUI();
