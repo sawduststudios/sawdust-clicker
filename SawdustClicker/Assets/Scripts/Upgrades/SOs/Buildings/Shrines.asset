@@ -17,8 +17,8 @@ MonoBehaviour:
   Description: A place of wonder and awe. You can hear a crackling sound of the pyre
     in the distance.
   TimesPurchased: 0
-  GainPerSecond: 260
+  GainPerSecond: 205
   GainMultiplier: 1
-  OriginalUpdgradeCost: 130000
+  OriginalUpdgradeCost: 80000
   CostIncreasePerPurchase: 0.15
   CurrentUpgradeCost: 130000

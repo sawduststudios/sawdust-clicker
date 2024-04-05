@@ -12,11 +12,13 @@ public class RandomSpawnsManager : MonoBehaviour
 
     public float Interval = 5f;
     public float SpawnChance = 0.02f;
+    private float _currentSpawnChance;
     public float ShownFor = 4f;
 
     private void Awake()
     {
         Instance = this;
+        _currentSpawnChance = SpawnChance;
     }
 
     private void Start()
@@ -37,15 +39,20 @@ public class RandomSpawnsManager : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(Interval);
-            if (Random.value <= SpawnChance)
+            if (Random.value <= _currentSpawnChance)
             {
                 SpawnBoost();
+            }
+            else
+            {
+                _currentSpawnChance += 0.002f;
             }
         }
     }
 
     private void SpawnBoost()
     {
+        _currentSpawnChance = SpawnChance;
         var spawnSpot = SpawnSpots[Random.Range(0, SpawnSpots.Count)].transform;
         var spawn = Instantiate(SpawnPrefab, spawnSpot.position, Quaternion.identity, spawnSpot);
         var randomBoost = Boosts[Random.Range(0, Boosts.Count)];

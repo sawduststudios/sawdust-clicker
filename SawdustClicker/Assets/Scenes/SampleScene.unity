@@ -701,7 +701,23 @@ MonoBehaviour:
     value: {fileID: 21300000, guid: ba602f89d5312b14cacae1872514179a, type: 3}
   - key: Potatoes
     value: {fileID: 21300000, guid: d297add088efd384da10bb34c249d1be, type: 3}
-  defaultSprite: {fileID: 21300000, guid: d297add088efd384da10bb34c249d1be, type: 3}
+  - key: Fanatics
+    value: {fileID: 21300000, guid: 5c72079317bb1894e82e47696dc7a34f, type: 3}
+  - key: Holy Priests
+    value: {fileID: 21300000, guid: a0d5c5e8d4f4bde4fbf5a615ebbf6d4b, type: 3}
+  - key: Holy Sawbible
+    value: {fileID: 21300000, guid: f046c008b4649fe4cac2da8925cdc3bd, type: 3}
+  - key: Sacred tattoos
+    value: {fileID: 21300000, guid: a23fa46054ddaa84b86b2e7d5cedfad1, type: 3}
+  - key: Crockburinka
+    value: {fileID: 21300000, guid: 15c90f4de7b1bea479e971918f9719c0, type: 3}
+  - key: Vratkov land lease
+    value: {fileID: 21300000, guid: 64953e6ebd74d354bae53c429bcc01aa, type: 3}
+  - key: Band Members
+    value: {fileID: 21300000, guid: 15f7681075c6dcd4fa5e4fad8758fc57, type: 3}
+  - key: Shrines
+    value: {fileID: 21300000, guid: 5f3dda2530fa6c142ba07fe084857e5e, type: 3}
+  defaultSprite: {fileID: 21300000, guid: d7a9e07d7370c484ab7716ccfc35a831, type: 3}
 --- !u!4 &73734972
 Transform:
   m_ObjectHideFlags: 0
@@ -2664,8 +2680,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ee1348343531f0c4a900d19b33dae425, type: 2}
   - {fileID: 11400000, guid: 10aa5dca9d619b04392cd74f39f06fcc, type: 2}
   - {fileID: 11400000, guid: f405156fc06834d46bb61cc3455dd6e7, type: 2}
-  - {fileID: 11400000, guid: 7420432344908464d87bc29b3840bd08, type: 2}
   - {fileID: 11400000, guid: f398c3786df2640439b306f2104d4e73, type: 2}
+  - {fileID: 11400000, guid: 7420432344908464d87bc29b3840bd08, type: 2}
   - {fileID: 11400000, guid: fd6915cb9e9ce2c48948f65ac8326bca, type: 2}
   - {fileID: 11400000, guid: 9c6fc2703248ad844aaebe5bafec8477, type: 2}
   _buildingUIToSpawn: {fileID: 8310535761518343876, guid: 5ed73885558f7ac49a33301841663b9c, type: 3}

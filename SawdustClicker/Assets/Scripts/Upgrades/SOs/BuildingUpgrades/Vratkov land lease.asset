@@ -15,7 +15,7 @@ MonoBehaviour:
   Name: Vratkov land lease
   Description: Not all GOATS are goats.
   Purchased: 0
-  PurchaseCost: 1300000
+  PurchaseCost: 800000
   ClickSPSPercentage: 0
   _isClick: 0
   TargetName: Shrines

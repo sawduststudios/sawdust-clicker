@@ -15,7 +15,7 @@ MonoBehaviour:
   Name: Holy Sawbible
   Description: It even has pictures!
   Purchased: 0
-  PurchaseCost: 120000
+  PurchaseCost: 90000
   ClickSPSPercentage: 0
   _isClick: 0
   TargetName: Holy Priests

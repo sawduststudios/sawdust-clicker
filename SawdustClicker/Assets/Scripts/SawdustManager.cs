@@ -23,6 +23,8 @@ public class SawdustManager : MonoBehaviour
     private bool _shouldReset = false;
     private bool _didTimeRunOut = false;
 
+    private int _kazoosActive = 0;
+
     // GO Refferences
     public GameObject MainCanvas;
     [SerializeField] private GameObject _buildingsCanvas;
@@ -173,6 +175,11 @@ public class SawdustManager : MonoBehaviour
     {
         if (_didTimeRunOut) return;
         Debug.Log("TimeRanOut");
+        // for each active kazoo, divide SPS by 10
+        for (int i = 0; i < _kazoosActive; i++)
+        {
+            PerSecMultiplier /= 10;
+        }
         Time.timeScale = 0;
         _shouldReset = true;
 
@@ -463,9 +470,11 @@ public class SawdustManager : MonoBehaviour
     {
         Debug.Log("Increasing PerSec for " + duration + " seconds by x" + multiplier);
         PerSecMultiplier *= multiplier;
+        _kazoosActive += 1;
         UpdateUI();
         yield return new WaitForSeconds(duration);
         PerSecMultiplier /= multiplier;
+        _kazoosActive -= 1;
         UpdateUI();
         Debug.Log("PerSec multiplier x" + multiplier + " ran out! Now at " + PerSecMultiplier);
     }
@@ -479,11 +488,11 @@ public class SawdustManager : MonoBehaviour
     {
         Debug.Log("Increasing Click for " + duration + " seconds by x" + multiplier);
         PerClickMultiplier *= multiplier;
-        PopUpVelocity *= 1.6f;
+        PopUpVelocity *= 2f;
         UpdateUI();
         yield return new WaitForSeconds(duration);
         PerClickMultiplier /= multiplier;
-        PopUpVelocity /= 1.6f;
+        PopUpVelocity /= 2f;
         UpdateUI();
         Debug.Log("Click multiplier x" + multiplier + " ran out! Now at " + PerClickMultiplier);
     }

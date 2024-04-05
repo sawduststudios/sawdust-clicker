@@ -16,8 +16,8 @@ MonoBehaviour:
   InternalName: Holy Priests
   Description: Steadfast guardians of the true faith. Clumsy but merciless.
   TimesPurchased: 0
-  GainPerSecond: 47
+  GainPerSecond: 43
   GainMultiplier: 1
-  OriginalUpdgradeCost: 12000
+  OriginalUpdgradeCost: 9000
   CostIncreasePerPurchase: 0.15
   CurrentUpgradeCost: 12000

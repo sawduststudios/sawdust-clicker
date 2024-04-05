@@ -15,7 +15,7 @@ MonoBehaviour:
   Name: Crockburinka
   Description: An engineering marvel. One size fits all.
   Purchased: 0
-  PurchaseCost: 14000000
+  PurchaseCost: 7500000
   ClickSPSPercentage: 0
   _isClick: 0
   TargetName: Band Members

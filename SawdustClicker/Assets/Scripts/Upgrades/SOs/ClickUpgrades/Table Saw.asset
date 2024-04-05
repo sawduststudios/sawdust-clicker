@@ -15,7 +15,7 @@ MonoBehaviour:
   Name: Table Saw
   Description: Spared no expense. Or heretic.
   Purchased: 0
-  PurchaseCost: 1300000
+  PurchaseCost: 1100000
   ClickSPSPercentage: 0.02
   _isClick: 1
   TargetName: 
