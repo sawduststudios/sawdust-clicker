@@ -10,14 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf5081e94737bdf479b391be94a093da, type: 3}
-  m_Name: Priests
+  m_Name: Band Members
   m_EditorClassIdentifier: 
-  Name: Holy Priests
-  InternalName: Holy Priests
-  Description: They pray to make sawdust. You better pray too!
-  TimesPurchased: 14
-  GainPerSecond: 8
+  Name: Band Members
+  InternalName: Band Members
+  Description: The right man in the wrong place can make all the difference in the
+    world.
+  TimesPurchased: 0
+  GainPerSecond: 1400
   GainMultiplier: 1
-  OriginalUpdgradeCost: 1100
+  OriginalUpdgradeCost: 1400000
   CostIncreasePerPurchase: 0.15
-  CurrentUpgradeCost: 7783.276340937875
+  CurrentUpgradeCost: 1400000

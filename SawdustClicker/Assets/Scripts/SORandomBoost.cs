@@ -10,6 +10,7 @@ public class SORandomBoost : ScriptableObject
     public double CliclMultiplier;
     public double SPSMultiplier;
     public float Duration;
+    public AudioClip Sound;
 
     public void ApplyBoost()
     {

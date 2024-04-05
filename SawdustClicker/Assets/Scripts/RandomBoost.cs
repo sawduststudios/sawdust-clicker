@@ -34,6 +34,7 @@ public class RandomBoost : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         Boost.ApplyBoost();
+        AudioSource.PlayClipAtPoint(Boost.Sound, Camera.main.transform.position);
         Destroy(gameObject);
     }
 }

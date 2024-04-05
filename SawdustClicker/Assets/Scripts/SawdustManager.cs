@@ -17,7 +17,9 @@ public class SawdustManager : MonoBehaviour
 {
     public static SawdustManager Instance;
 
-    [SerializeField] private float _totalTime = 900;
+    public float PopUpVelocity = 750f;
+
+    public float TotalTime = 900f;
     private bool _shouldReset = false;
     private bool _didTimeRunOut = false;
 
@@ -160,8 +162,8 @@ public class SawdustManager : MonoBehaviour
             }
         }
 
-        _totalTime -= Time.deltaTime;
-        if (_totalTime <= 0)
+        TotalTime -= Time.deltaTime;
+        if (TotalTime <= 0)
         {
             TimeRanOut();
         }
@@ -220,7 +222,7 @@ public class SawdustManager : MonoBehaviour
         Debug.Log("SAVING GAME");
 
         // Saving Manager state
-        PlayerPrefs.SetFloat(saveKey_TotalTime, _totalTime);
+        PlayerPrefs.SetFloat(saveKey_TotalTime, TotalTime);
         PlayerPrefs.SetString(saveKey_CurrentSawdustCount, CurrentSawdustCount.ToString());
         PlayerPrefs.SetString(saveKey_PerSecMultiplier, PerSecMultiplier.ToString());
         PlayerPrefs.SetString(saveKey_PerClickBase, PerClickBase.ToString());
@@ -247,7 +249,7 @@ public class SawdustManager : MonoBehaviour
         Debug.Log("LOADING GAME");
 
         if (PlayerPrefs.HasKey(saveKey_TotalTime))
-            _totalTime = PlayerPrefs.GetFloat(saveKey_TotalTime);
+            TotalTime = PlayerPrefs.GetFloat(saveKey_TotalTime);
         if (PlayerPrefs.HasKey(saveKey_CurrentSawdustCount))
             CurrentSawdustCount = double.Parse(PlayerPrefs.GetString(saveKey_CurrentSawdustCount));
         if (PlayerPrefs.HasKey(saveKey_PerSecMultiplier))
@@ -477,9 +479,11 @@ public class SawdustManager : MonoBehaviour
     {
         Debug.Log("Increasing Click for " + duration + " seconds by x" + multiplier);
         PerClickMultiplier *= multiplier;
+        PopUpVelocity *= 1.6f;
         UpdateUI();
         yield return new WaitForSeconds(duration);
         PerClickMultiplier /= multiplier;
+        PopUpVelocity /= 1.6f;
         UpdateUI();
         Debug.Log("Click multiplier x" + multiplier + " ran out! Now at " + PerClickMultiplier);
     }

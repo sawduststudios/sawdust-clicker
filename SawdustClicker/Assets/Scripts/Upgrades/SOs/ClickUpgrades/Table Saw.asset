@@ -10,10 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 49b8f979c7a33c7428c74b0f73cb3485, type: 3}
-  m_Name: Secondary
+  m_Name: Table Saw
   m_EditorClassIdentifier: 
-  Name: Stone saw
-  Description: This is a stone saw
+  Name: Table Saw
+  Description: Spared no expense. Or heretic.
   Purchased: 0
-  PurchaseCost: 100000
+  PurchaseCost: 1300000
   ClickSPSPercentage: 0.02
+  _isClick: 1
+  TargetName: 
+  TargetMultiplier: 1

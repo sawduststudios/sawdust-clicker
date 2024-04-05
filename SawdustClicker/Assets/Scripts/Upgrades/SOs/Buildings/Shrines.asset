@@ -10,14 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf5081e94737bdf479b391be94a093da, type: 3}
-  m_Name: Grandmas
+  m_Name: Shrines
   m_EditorClassIdentifier: 
-  Name: Grandmas
-  InternalName: Grandmas
-  Description: They have been using saws long before you were born.
+  Name: Shrines
+  InternalName: Shrines
+  Description: A place of wonder and awe. You can hear a crackling sound of the pyre
+    in the distance.
   TimesPurchased: 0
-  GainPerSecond: 1
+  GainPerSecond: 260
   GainMultiplier: 1
-  OriginalUpdgradeCost: 100
+  OriginalUpdgradeCost: 130000
   CostIncreasePerPurchase: 0.15
-  CurrentUpgradeCost: 100
+  CurrentUpgradeCost: 130000

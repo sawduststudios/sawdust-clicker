@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf5081e94737bdf479b391be94a093da, type: 3}
-  m_Name: BandMembers
+  m_Name: Holy Priests
   m_EditorClassIdentifier: 
-  Name: Band Members
-  InternalName: Band Members
-  Description: Gonna burn, there be no release!
+  Name: Holy Priests
+  InternalName: Holy Priests
+  Description: Steadfast guardians of the true faith. Clumsy but merciless.
   TimesPurchased: 0
-  GainPerSecond: 954321
+  GainPerSecond: 47
   GainMultiplier: 1
-  OriginalUpdgradeCost: 1
+  OriginalUpdgradeCost: 12000
   CostIncreasePerPurchase: 0.15
-  CurrentUpgradeCost: 1
+  CurrentUpgradeCost: 12000

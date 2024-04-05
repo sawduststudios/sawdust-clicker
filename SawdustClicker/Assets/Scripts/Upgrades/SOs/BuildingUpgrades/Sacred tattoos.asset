@@ -10,10 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 49b8f979c7a33c7428c74b0f73cb3485, type: 3}
-  m_Name: Basic
+  m_Name: Sacred tattoos
   m_EditorClassIdentifier: 
-  Name: Wooden Saw
-  Description: This is a wooden saw
+  Name: Sacred tattoos
+  Description: A rare combo of cringe and cool, just like baseplayers.
   Purchased: 0
-  PurchaseCost: 69
-  ClickSPSPercentage: 0.01
+  PurchaseCost: 11000
+  ClickSPSPercentage: 0
+  _isClick: 0
+  TargetName: Fanatics
+  TargetMultiplier: 2

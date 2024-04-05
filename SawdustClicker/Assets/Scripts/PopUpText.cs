@@ -6,8 +6,6 @@ using UnityEngine;
 public class PopUpText : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _clickAmmountText;
-
-    [SerializeField] private float _startingVelocity = 750f;
     [SerializeField] private float _velocityDecayRate = 1500f;
     [SerializeField] private float _timeBeforeFade = 0.6f;
     [SerializeField] private float _fadeSpeed = 3f;
@@ -18,6 +16,7 @@ public class PopUpText : MonoBehaviour
 
     private float _timer = 0f;
     private float _alpha = 1f;
+
 
     public static PopUpText Create(double ammount, Vector3 position)
     {
@@ -36,7 +35,7 @@ public class PopUpText : MonoBehaviour
         _clickAmmountText.text = "+" + ammount.ToFormattedStr();
 
         float randomX = Random.Range(-300f, 300f);
-        _currVelocity = new Vector2(randomX, _startingVelocity);
+        _currVelocity = new Vector2(randomX, SawdustManager.Instance.PopUpVelocity);
     }
 
     private void Awake()

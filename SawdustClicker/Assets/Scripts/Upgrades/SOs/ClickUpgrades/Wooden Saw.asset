@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49b8f979c7a33c7428c74b0f73cb3485, type: 3}
+  m_Name: Wooden Saw
+  m_EditorClassIdentifier: 
+  Name: Wooden Saw
+  Description: Because you can't sow sawdust. Also a good way to get buffed.
+  Purchased: 0
+  PurchaseCost: 5000
+  ClickSPSPercentage: 0.01
+  _isClick: 1
+  TargetName: 
+  TargetMultiplier: 1

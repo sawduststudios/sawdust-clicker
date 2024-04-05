@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 49b8f979c7a33c7428c74b0f73cb3485, type: 3}
-  m_Name: GrandmasDouble
+  m_Name: Chain Saw
   m_EditorClassIdentifier: 
-  Name: Double Grandma
-  Description: Your grandma so fat, she makes more sawdust.
+  Name: Chain Saw
+  Description: Don't forget proper maintenance - blood is an excellent lubricant.
   Purchased: 0
-  PurchaseCost: 21
-  ClickSPSPercentage: 0
-  _isClick: 0
-  TargetName: Grandmas
-  TargetMultiplier: 2
+  PurchaseCost: 100000
+  ClickSPSPercentage: 0.01
+  _isClick: 1
+  TargetName: 
+  TargetMultiplier: 1
